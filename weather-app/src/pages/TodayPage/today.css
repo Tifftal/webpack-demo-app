@@ -1,0 +1,28 @@
+.today {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.today_container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 400px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.today_container img {
+  object-fit: contain;
+  width: 60px;
+}
+
+.today_content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.today_content p {
+  margin: 0;
+}
