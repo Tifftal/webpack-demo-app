@@ -66,97 +66,19 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [{ from: "public/offline.html", to: "offline.html" }],
     }),
-    new GenerateSW({
-      clientsClaim: true,
-      skipWaiting: true,
-      navigateFallback: "/offline.html",
-      navigateFallbackDenylist: [
-        new RegExp("^/_"),
-        new RegExp("/[^/]+\\.[^/]+$"),
-      ],
-      include: [/index\.html$/, /offline\.html$/],
-      runtimeCaching: [
-        {
-          urlPattern: /^\/$/,
-          handler: "NetworkFirst",
-          options: {
-            cacheName: "html-cache",
-            cacheableResponse: {
-              statuses: [0, 200],
-            },
-          },
-        },
-        {
-          urlPattern: /^\/(weather|news)(\/.*)?$/,
-          handler: "NetworkFirst",
-          options: {
-            cacheName: "html-cache",
-            cacheableResponse: {
-              statuses: [0, 200],
-            },
-          },
-        },
-        {
-          // Локальные картинки
-          urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
-          handler: "CacheFirst",
-          options: {
-            cacheName: "images",
-            expiration: {
-              maxEntries: 100,
-              maxAgeSeconds: 60 * 60 * 24 * 30,
-            },
-            cacheableResponse: {
-              statuses: [0, 200],
-            },
-          },
-        },
-        {
-          // Картинки из weather
-          urlPattern:
-            /^https?:\/\/localhost:3001\/.*\.(?:png|jpg|jpeg|svg|gif|webp)$/,
-          handler: "CacheFirst",
-          options: {
-            cacheName: "remote-weather-assets",
-            expiration: {
-              maxEntries: 50,
-              maxAgeSeconds: 30 * 24 * 60 * 60,
-            },
-            cacheableResponse: {
-              statuses: [0, 200],
-            },
-          },
-        },
-        {
-          // Pапросы из news
-          urlPattern: /^https:\/\/newsapi\.org\/v2\/.*$/,
-          handler: "StaleWhileRevalidate",
-          options: {
-            cacheName: "remote-news-requests",
-            expiration: {
-              maxEntries: 50,
-              maxAgeSeconds: 30 * 24 * 60 * 60,
-            },
-            cacheableResponse: {
-              statuses: [0, 200],
-            },
-          },
-        },
-      ],
+    new InjectManifest({
+      swSrc: "./src/sw.ts",
+      swDest: "service-worker.js",
     }),
-    // new InjectManifest({
-    //   swSrc: "./src/sw.ts",
-    //   swDest: "service-worker.js",
-    // }),
 
-    // new HtmlWebpackPlugin({
-    //   template: "./public/index.html",
-    //   filename: "index.html",
-    // }),
-    // new HtmlWebpackPlugin({
-    //   template: "./public/offline.html",
-    //   filename: "offline.html",
-    //   inject: false,
-    // }),
+    new HtmlWebpackPlugin({
+      template: "./public/index.html",
+      filename: "index.html",
+    }),
+    new HtmlWebpackPlugin({
+      template: "./public/offline.html",
+      filename: "offline.html",
+      inject: false,
+    }),
   ],
 };
