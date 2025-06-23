@@ -75,10 +75,10 @@ module.exports = {
       template: "./public/index.html",
       filename: "index.html",
     }),
-    new HtmlWebpackPlugin({
-      template: "./public/offline.html",
-      filename: "offline.html",
-      inject: false,
-    }),
+    // new HtmlWebpackPlugin({
+    //   template: "./public/offline.html",
+    //   filename: "offline.html",
+    //   inject: false,
+    // }),
   ],
 };

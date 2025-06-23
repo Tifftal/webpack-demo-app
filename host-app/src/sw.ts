@@ -14,7 +14,7 @@ import { CacheableResponsePlugin } from "workbox-cacheable-response";
 
 declare const self: ServiceWorkerGlobalScope & typeof globalThis;
 
-precacheAndRoute(self.__WB_MANIFEST);
+precacheAndRoute([...self.__WB_MANIFEST]);
 
 registerRoute(
   new NavigationRoute(
@@ -24,8 +24,6 @@ registerRoute(
     }),
     {
       denylist: [
-        /^\/weather\//,
-        /^\/news\//,
         /\.(?:js|css|png|jpg|jpeg|svg|woff2?|webp)$/,
         /^\/service-worker\.js$/,
         /^\/manifest\.json$/,
