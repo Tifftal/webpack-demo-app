@@ -1,7 +1,6 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
 const path = require("path");
-const { GenerateSW } = require("workbox-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const { InjectManifest } = require("workbox-webpack-plugin");
 
@@ -16,9 +15,11 @@ module.exports = {
       "Access-Control-Allow-Headers":
         "X-Requested-With, content-type, Authorization",
     },
+    webSocketServer: false,
     hot: true,
     historyApiFallback: true,
     client: {
+      webSocketURL: "ws://localhost:3000/ws",
       logging: "warn",
     },
   },
@@ -38,6 +39,10 @@ module.exports = {
         test: /\.(png|jpe?g|gif|svg)$/i,
         type: "asset/resource",
       },
+      // {
+      //   test: /\.html$/,
+      //   type: "asset/resource",
+      // },
     ],
   },
   plugins: [
@@ -69,16 +74,7 @@ module.exports = {
     new InjectManifest({
       swSrc: "./src/sw.ts",
       swDest: "service-worker.js",
+      // exclude: [/bundle\.js$/],
     }),
-
-    new HtmlWebpackPlugin({
-      template: "./public/index.html",
-      filename: "index.html",
-    }),
-    // new HtmlWebpackPlugin({
-    //   template: "./public/offline.html",
-    //   filename: "offline.html",
-    //   inject: false,
-    // }),
   ],
 };

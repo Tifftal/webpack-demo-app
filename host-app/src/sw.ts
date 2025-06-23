@@ -5,9 +5,9 @@ import {
   NavigationRoute,
 } from "workbox-routing";
 import {
-  NetworkFirst,
   CacheFirst,
   StaleWhileRevalidate,
+  NetworkOnly,
 } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
 import { CacheableResponsePlugin } from "workbox-cacheable-response";
@@ -16,26 +16,14 @@ declare const self: ServiceWorkerGlobalScope & typeof globalThis;
 
 precacheAndRoute([...self.__WB_MANIFEST]);
 
-registerRoute(
-  new NavigationRoute(
-    new NetworkFirst({
-      cacheName: "pages",
-      plugins: [new CacheableResponsePlugin({ statuses: [0, 200] })],
-    }),
-    {
-      denylist: [
-        /\.(?:js|css|png|jpg|jpeg|svg|woff2?|webp)$/,
-        /^\/service-worker\.js$/,
-        /^\/manifest\.json$/,
-        /^\/favicon\..*$/,
-      ],
-    }
-  )
-);
+registerRoute(({ request }) => request.mode === "navigate", new NetworkOnly());
 
 setCatchHandler(async ({ event }) => {
+  console.log("⚠️ [SW] Catch triggered for", event.request.url);
+
   if (event.request.destination === "document") {
     const cached = await matchPrecache("/offline.html");
+    console.log("📄 [SW] Returning offline.html:", !!cached);
     return cached || new Response("Offline page not found", { status: 503 });
   }
 
